@@ -1,9 +1,12 @@
 package com.mk.manik.mosquelocator;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Manik on 11/25/2017.
@@ -45,6 +48,32 @@ public class DataParser {
         }
         return googlePlacesMap;
     }
-    
-    
+
+    private List<HashMap<String,String>> getPlaces(JSONArray jsonArray){
+        int count = jsonArray.length();
+        List<HashMap<String,String >> placesList = new ArrayList<>();
+        HashMap<String,String> placeMap = null;
+        for(int i=0;i<count;i++){
+            try {
+                placeMap = getPlaces((JSONObject) jsonArray.get(i));
+                placesList.add(placeMap);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return placesList;
+    }
+
+    public List<HashMap<String,String>> parse(String jsonData){
+        JSONArray jsonArray = null;
+        JSONObject jsonObject;
+        try {
+            jsonObject = new JSONObject(jsonData);
+            jsonArray = jsonObject.getJSONArray("results");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return getPlaces(jsonArray);
+    }
 }
